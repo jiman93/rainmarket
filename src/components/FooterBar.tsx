@@ -1,12 +1,13 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import { useDashboardStore } from "../store";
+import { useQuery } from "@tanstack/react-query";
 import DownloadIcon from "@mui/icons-material/Download";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
-import { useDashboardStore } from "../store";
-import { useQuery } from "@tanstack/react-query";
 
 const COUNTRY_CODES = [
   { code: "MY", name: "Malaysia" },
@@ -116,26 +117,20 @@ const FooterBar: React.FC = () => {
         </Typography>
         <Typography variant="caption" color="text.secondary">
           Note: Data is fetched live from the World Bank API for ASEAN countries and selected
-          indicators.
+          indicators. Created by Zul Hafiz.
         </Typography>
       </Box>
-      <Box display="flex" gap={1}>
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<DownloadIcon />}
-          onClick={handleDownload}
-        >
-          Download JSON
-        </Button>
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-          onClick={handleFullscreen}
-        >
-          {isFullscreen ? "Exit Full-Screen" : "Enter Full-Screen"}
-        </Button>
+      <Box display="flex" gap={2}>
+        <Tooltip title="Download JSON">
+          <IconButton color="default" onClick={handleDownload} size="large">
+            <DownloadIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={isFullscreen ? "Exit Full-Screen" : "Enter Full-Screen"}>
+          <IconButton color="default" onClick={handleFullscreen} size="large">
+            {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );

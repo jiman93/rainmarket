@@ -1,60 +1,32 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
 import { useDashboardStore } from "../store";
-
-const INDICATORS = [
-  {
-    code: "BX.KLT.DINV.WD.GD.ZS",
-    label: "Foreign direct investment, net inflows (% of GDP)",
-  },
-  {
-    code: "NE.EXP.GNFS.ZS",
-    label: "Export of goods and services (% of GDP)",
-  },
-  {
-    code: "BN.GSR.GNFS.CD",
-    label: "Net trade in goods and services (BoP, current US$)",
-  },
-  {
-    code: "EG.ELC.HYRO.ZS",
-    label: "Electricity production from hydroelectric sources (% of total)",
-  },
-];
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 
 const IndicatorSelector: React.FC = () => {
-  const searchTerm = useDashboardStore((s) => s.searchTerm);
-  const setSearchTerm = useDashboardStore((s) => s.setSearchTerm);
   const selectedIndicator = useDashboardStore((s) => s.selectedIndicators[0]);
-  const setSelectedIndicators = useDashboardStore((s) => s.setSelectedIndicators);
+  const setSelectedIndicator = useDashboardStore((s) => s.setSelectedIndicator);
 
   return (
-    <Box display="flex" gap={2} mb={2}>
-      <FormControl size="small" sx={{ minWidth: 320, flex: 2 }}>
-        <InputLabel>Indicator</InputLabel>
-        <Select
-          value={selectedIndicator}
-          label="Indicator"
-          onChange={(e) => setSelectedIndicators([e.target.value])}
-        >
-          {INDICATORS.map((ind) => (
-            <MenuItem key={ind.code} value={ind.code}>
-              {ind.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <Box display="flex" flexDirection="column" gap={2} mb={2}>
       <TextField
+        select
         size="small"
-        label="Search for a country or region"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        sx={{ flex: 1 }}
-      />
+        label="Indicator"
+        value={selectedIndicator}
+        onChange={(e) => setSelectedIndicator(e.target.value)}
+        SelectProps={{
+          native: true,
+        }}
+        sx={{ width: 600 }}
+      >
+        <option value="BX.KLT.DINV.WD.GD.ZS">
+          Foreign direct investment, net inflows (% of GDP)
+        </option>
+        <option value="NE.EXP.GNFS.ZS">Exports of goods and services (% of GDP)</option>
+        <option value="NE.TRD.GNFS.ZS">Trade (% of GDP)</option>
+        <option value="EG.ELC.HYRO.ZS">Hydroelectricity (% of total electricity output)</option>
+      </TextField>
     </Box>
   );
 };

@@ -11,13 +11,13 @@ const YearSlider: React.FC = () => {
   const setYearRange = useDashboardStore((s) => s.setYearRange);
 
   return (
-    <Box display="flex" alignItems="center" gap={2} mt={2} mb={2}>
+    <Box display="flex" alignItems="center" gap={2} mt={2} mb={2} sx={{ ml: 4 }}>
       <Slider
         min={MIN_YEAR}
         max={MAX_YEAR}
         value={yearRange}
         onChange={(_, v) => setYearRange(v as [number, number])}
-        sx={{ width: 240 }}
+        sx={{ width: 300 }}
         valueLabelDisplay="auto"
         marks={[
           { value: MIN_YEAR, label: MIN_YEAR.toString() },

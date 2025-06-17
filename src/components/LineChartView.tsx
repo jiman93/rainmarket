@@ -1,0 +1,148 @@
+import * as React from "react";
+import { useDashboardStore } from "../store";
+import { useQuery } from "@tanstack/react-query";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+
+const COUNTRY_CODES = [
+  { code: "MY", name: "Malaysia" },
+  { code: "ID", name: "Indonesia" },
+  { code: "SG", name: "Singapore" },
+  { code: "TH", name: "Thailand" },
+  { code: "MM", name: "Myanmar" },
+  { code: "VN", name: "Vietnam" },
+  { code: "BN", name: "Brunei" },
+  { code: "LA", name: "Lao PDR" },
+  { code: "KH", name: "Cambodia" },
+  { code: "PH", name: "Philippines" },
+];
+const ALL_YEARS = Array.from({ length: 2021 - 2011 + 1 }, (_, i) => 2011 + i);
+
+function processLineData(apiData: unknown, selectedCountries: string[], years: number[]) {
+  const data = apiData as { [key: number]: unknown[] };
+  const byCountry: Record<string, Record<number, number | null>> = {};
+  for (const c of COUNTRY_CODES) {
+    byCountry[c.code] = {};
+  }
+  const arr = Array.isArray((data as { [key: number]: unknown[] })[1])
+    ? (data as { [key: number]: unknown[] })[1]
+    : [];
+  for (const row of arr as Array<{ country: { id: string }; date: string; value: number | null }>) {
+    const country = row.country.id;
+    const year = Number(row.date);
+    const value = row.value;
+    if (byCountry[country] && years.includes(year)) {
+      byCountry[country][year] = value ?? null;
+    }
+  }
+  // Build chart data: [{ year: 2011, MY: 1.2, ID: 2.3, ... }, ...]
+  return years.map((year) => {
+    const entry: Record<string, any> = { year };
+    for (const c of selectedCountries) {
+      entry[c] = byCountry[c][year] ?? null;
+    }
+    return entry;
+  });
+}
+
+const COLORS = [
+  "#8884d8",
+  "#82ca9d",
+  "#ffc658",
+  "#ff7300",
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#A28FD0",
+  "#FF6699",
+];
+
+const LineChartView: React.FC = () => {
+  const selectedCountries = useDashboardStore((s) => s.selectedCountries);
+  const selectedIndicator = useDashboardStore((s) => s.selectedIndicators[0]);
+  const yearRange = useDashboardStore((s) => s.yearRange);
+  const years = React.useMemo(() => {
+    const [start, end] = yearRange;
+    return ALL_YEARS.filter((y) => y >= start && y <= end);
+  }, [yearRange]);
+
+  function buildWorldBankUrl() {
+    const countryStr = selectedCountries.join(";");
+    const yearStr = `${ALL_YEARS[0]}:${ALL_YEARS[ALL_YEARS.length - 1]}`;
+    return `https://api.worldbank.org/v2/country/${countryStr}/indicator/${selectedIndicator}?format=json&date=${yearStr}&per_page=1000`;
+  }
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["line-chart", selectedIndicator, selectedCountries, ALL_YEARS],
+    queryFn: async () => {
+      const url = buildWorldBankUrl();
+      const res = await fetch(url);
+      return res.json();
+    },
+    enabled: selectedCountries.length > 0,
+  });
+
+  const chartData = React.useMemo(
+    () => (data ? processLineData(data, selectedCountries, years) : []),
+    [data, selectedCountries, years]
+  );
+
+  if (isLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box color="error.main" textAlign="center" minHeight={300}>
+        Error loading data.
+      </Box>
+    );
+  }
+  if (!selectedCountries.length) {
+    return (
+      <Box textAlign="center" color="text.secondary" minHeight={300}>
+        Select at least one country to view the chart.
+      </Box>
+    );
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart data={chartData} margin={{ top: 20, right: 40, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+        <YAxis tick={{ fontSize: 12 }} />
+        <Tooltip />
+        <Legend />
+        {selectedCountries.map((code, idx) => (
+          <Line
+            key={code}
+            type="monotone"
+            dataKey={code}
+            name={COUNTRY_CODES.find((c) => c.code === code)?.name || code}
+            stroke={COLORS[idx % COLORS.length]}
+            strokeWidth={2}
+            dot={false}
+            connectNulls
+          />
+        ))}
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
+
+export default LineChartView;

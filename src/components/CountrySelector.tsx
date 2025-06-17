@@ -1,6 +1,15 @@
 import React from "react";
 import { useDashboardStore } from "../store";
 import type { CountryCode } from "../store";
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 const COUNTRY_LABELS: Record<CountryCode, string> = {
   MY: "Malaysia",
@@ -18,6 +27,7 @@ const COUNTRY_LABELS: Record<CountryCode, string> = {
 const CountrySelector: React.FC = () => {
   const selectedCountries = useDashboardStore((s) => s.selectedCountries);
   const setSelectedCountries = useDashboardStore((s) => s.setSelectedCountries);
+  const [search, setSearch] = React.useState("");
 
   const handleToggle = (code: CountryCode) => {
     if (selectedCountries.includes(code)) {
@@ -27,23 +37,95 @@ const CountrySelector: React.FC = () => {
     }
   };
 
+  const handleClear = () => setSelectedCountries([]);
+
+  const filteredCountries = Object.entries(COUNTRY_LABELS).filter(([, label]) =>
+    label.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="country-selector">
-      <label>Select ASEAN Countries:</label>
-      <div style={{ background: "#222", color: "#aaa", padding: "1em", borderRadius: "8px" }}>
-        {Object.entries(COUNTRY_LABELS).map(([code, label]) => (
-          <label key={code} style={{ display: "block", marginBottom: 4 }}>
-            <input
-              type="checkbox"
-              checked={selectedCountries.includes(code as CountryCode)}
-              onChange={() => handleToggle(code as CountryCode)}
-              style={{ marginRight: 8 }}
-            />
-            {label}
-          </label>
-        ))}
-      </div>
-    </div>
+    <Box
+      sx={{
+        width: 300,
+        minWidth: 220,
+        maxWidth: 340,
+        bgcolor: "background.paper",
+        borderLeft: 1,
+        borderColor: "divider",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        py: 2,
+        px: 2,
+        boxShadow: 2,
+        height: "100%",
+      }}
+    >
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+        <Typography variant="h6" fontWeight={600} fontSize={18}>
+          Countries
+        </Typography>
+        <Tooltip title="Clear all">
+          <IconButton size="small" onClick={handleClear}>
+            <ClearAllIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      <TextField
+        size="small"
+        placeholder="Search country"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon fontSize="small" />
+            </InputAdornment>
+          ),
+        }}
+        sx={{ mb: 2 }}
+      />
+      <Box sx={{ flex: 1, overflowY: "auto", pr: 1 }}>
+        {filteredCountries.length === 0 ? (
+          <Typography color="text.secondary" fontSize={14} textAlign="center" mt={2}>
+            No countries found
+          </Typography>
+        ) : (
+          filteredCountries.map(([code, label]) => (
+            <Box
+              key={code}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                mb: 1,
+                px: 1,
+                borderRadius: 1,
+                bgcolor: selectedCountries.includes(code as CountryCode)
+                  ? "action.selected"
+                  : undefined,
+                transition: "background 0.2s",
+              }}
+            >
+              <Checkbox
+                checked={selectedCountries.includes(code as CountryCode)}
+                onChange={() => handleToggle(code as CountryCode)}
+                size="small"
+                sx={{ mr: 1 }}
+                inputProps={{ "aria-label": label }}
+              />
+              <Typography
+                fontSize={15}
+                color={
+                  selectedCountries.includes(code as CountryCode) ? "primary.main" : "text.primary"
+                }
+              >
+                {label}
+              </Typography>
+            </Box>
+          ))
+        )}
+      </Box>
+    </Box>
   );
 };
 
