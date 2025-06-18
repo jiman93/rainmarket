@@ -32,3 +32,4 @@ const IndicatorSelector: React.FC = () => {
 };
 
 export default IndicatorSelector;
+ 

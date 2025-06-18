@@ -60,3 +60,4 @@ const FilterBar: React.FC = () => {
 };
 
 export default FilterBar;
+ 

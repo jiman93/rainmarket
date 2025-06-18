@@ -16,6 +16,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import React from "react";
 import { useDashboardStore } from "./store";
 import BarChartView from "./components/BarChartView";
+import MapView from "./components/MapView";
 
 function App() {
   const [mode, setMode] = React.useState<"light" | "dark">("dark");
@@ -67,14 +68,17 @@ function App() {
               {tab === 0 ? <TableView /> : null}
               {tab === 1 ? <LineChartView /> : null}
               {tab === 2 ? <BarChartView /> : null}
-              <Box>
-                <YearSlider />
-              </Box>
+              {tab === 3 ? <MapView /> : null}
+              {tab !== 3 && (
+                <Box>
+                  <YearSlider />
+                </Box>
+              )}
               <Box sx={{ width: "100%", mt: 2 }}>
                 <FooterBar />
               </Box>
             </Box>
-            <CountrySelector />
+            {tab !== 3 && <CountrySelector />}
           </Box>
         </Box>
       </Box>

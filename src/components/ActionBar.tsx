@@ -124,22 +124,26 @@ const ActionBar: React.FC<{ tab: number; data: unknown }> = ({ tab, data }) => {
 
   return (
     <>
-      <Tooltip title="Download">
-        <IconButton color="default" onClick={handleDownloadClick} size="large">
-          <DownloadIcon />
-        </IconButton>
-      </Tooltip>
-      <Menu anchorEl={anchorEl} open={menuOpen} onClose={handleMenuClose}>
-        {tab === 0 && <MenuItem onClick={handleDownloadJSON}>Download as JSON</MenuItem>}
-        {(tab === 1 || tab === 2) && [
-          <MenuItem onClick={handleDownloadPNG} key="png">
-            Download as PNG
-          </MenuItem>,
-          <MenuItem onClick={handleDownloadPDF} key="pdf">
-            Download as PDF
-          </MenuItem>,
-        ]}
-      </Menu>
+      {tab !== 3 && (
+        <>
+          <Tooltip title="Download">
+            <IconButton color="default" onClick={handleDownloadClick} size="large">
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
+          <Menu anchorEl={anchorEl} open={menuOpen} onClose={handleMenuClose}>
+            {tab === 0 && <MenuItem onClick={handleDownloadJSON}>Download as JSON</MenuItem>}
+            {(tab === 1 || tab === 2) && [
+              <MenuItem onClick={handleDownloadPNG} key="png">
+                Download as PNG
+              </MenuItem>,
+              <MenuItem onClick={handleDownloadPDF} key="pdf">
+                Download as PDF
+              </MenuItem>,
+            ]}
+          </Menu>
+        </>
+      )}
       <Tooltip title={isFullscreen ? "Exit Full-Screen" : "Enter Full-Screen"}>
         <IconButton color="default" onClick={handleFullscreen} size="large">
           {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
