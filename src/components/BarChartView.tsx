@@ -154,7 +154,6 @@ const BarChartView: React.FC = () => {
     );
   }
 
-  console.log(chartData); 
   return (
     <Box ref={chartRefCallback} sx={{ background: "transparent" }}>
       <ResponsiveContainer width="100%" height={400}>

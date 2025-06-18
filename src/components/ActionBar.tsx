@@ -131,7 +131,7 @@ const ActionBar: React.FC<{ tab: number; data: unknown }> = ({ tab, data }) => {
       </Tooltip>
       <Menu anchorEl={anchorEl} open={menuOpen} onClose={handleMenuClose}>
         {tab === 0 && <MenuItem onClick={handleDownloadJSON}>Download as JSON</MenuItem>}
-        {tab === 1 && [
+        {(tab === 1 || tab === 2) && [
           <MenuItem onClick={handleDownloadPNG} key="png">
             Download as PNG
           </MenuItem>,
