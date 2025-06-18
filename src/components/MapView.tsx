@@ -77,7 +77,7 @@ const MapView: React.FC = () => {
         style={{ width: "100%", height: 500 }}
       >
         <ZoomableGroup>
-          <Geographies geography="/southeast-asia.geojson">
+          <Geographies geography={`${import.meta.env.BASE_URL}southeast-asia.geojson`}>
             {({ geographies }: { geographies: any[] }) => {
               return geographies
                 .filter((geo: any) => ASEAN_CODES.includes(geo.properties.ISO_A3))
