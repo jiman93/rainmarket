@@ -159,11 +159,11 @@ const LineChartView: React.FC = () => {
 
   return (
     <Box ref={chartRefCallback} sx={{ background: "transparent" }}>
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={chartData} margin={{ top: 20, right: 40, left: 0, bottom: 0 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <LineChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }} />
+          <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+          <YAxis tick={{ fontSize: 11 }} />
           <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
           <Legend />
           {selectedCountries.map((code, idx) => (

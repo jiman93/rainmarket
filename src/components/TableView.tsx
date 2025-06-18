@@ -159,12 +159,15 @@ const TableView: React.FC = () => {
   }
 
   return (
-    <Box sx={{ minWidth: 1100, overflowX: "auto" }}>
-      <TableContainer component={Paper}>
+    <Box sx={{ minWidth: 700, overflowX: "auto" }}>
+      <TableContainer component={Paper} sx={{ boxShadow: 1 }}>
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell onClick={() => handleSort("country")} style={{ cursor: "pointer" }}>
+              <TableCell
+                onClick={() => handleSort("country")}
+                style={{ cursor: "pointer", fontSize: 13, padding: 6 }}
+              >
                 Country {sortBy === "country" ? (sortDir === "asc" ? "▲" : "▼") : ""}
               </TableCell>
               {years.map((year) => (
@@ -172,7 +175,7 @@ const TableView: React.FC = () => {
                   key={year}
                   onClick={() => handleSort("y" + year)}
                   align="right"
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", fontSize: 13, padding: 6 }}
                 >
                   {year} {sortBy === "y" + year ? (sortDir === "asc" ? "▲" : "▼") : ""}
                 </TableCell>
@@ -180,28 +183,28 @@ const TableView: React.FC = () => {
               <TableCell
                 onClick={() => handleSort("avg")}
                 align="right"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontSize: 13, padding: 6 }}
               >
                 Average {sortBy === "avg" ? (sortDir === "asc" ? "▲" : "▼") : ""}
               </TableCell>
               <TableCell
                 onClick={() => handleSort("min")}
                 align="right"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontSize: 13, padding: 6 }}
               >
                 Min {sortBy === "min" ? (sortDir === "asc" ? "▲" : "▼") : ""}
               </TableCell>
               <TableCell
                 onClick={() => handleSort("max")}
                 align="right"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontSize: 13, padding: 6 }}
               >
                 Max {sortBy === "max" ? (sortDir === "asc" ? "▲" : "▼") : ""}
               </TableCell>
               <TableCell
                 onClick={() => handleSort("change")}
                 align="right"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontSize: 13, padding: 6 }}
               >
                 Change {sortBy === "change" ? (sortDir === "asc" ? "▲" : "▼") : ""}
               </TableCell>

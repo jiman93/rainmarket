@@ -70,51 +70,62 @@ const MapView: React.FC = () => {
   const colorScale = scaleSequential(interpolateYlOrRd).domain([min, max]);
 
   return (
-    <Box sx={{ background: "transparent", p: 2, borderRadius: 2 }}>
-      <ComposableMap
-        projection="geoMercator"
-        projectionConfig={{ scale: 1200, center: [115, 5] }}
-        style={{ width: "100%", height: 500 }}
-      >
-        <ZoomableGroup>
-          <Geographies geography={`${import.meta.env.BASE_URL}southeast-asia.geojson`}>
-            {({ geographies }: { geographies: any[] }) => {
-              return geographies
-                .filter((geo: any) => ASEAN_CODES.includes(geo.properties.ISO_A3))
-                .map((geo: any) => {
-                  const code = geo.properties.ISO_A3;
-                  const value = valueByCountry[code];
-                  return (
-                    <Tooltip
-                      key={code}
-                      title={
-                        <span>
-                          <b>{COUNTRY_CODE_TO_NAME[code]}</b>
-                          <br />
-                          Year: {year}
-                          <br />
-                          Value: {value !== null && value !== undefined ? value.toFixed(2) : "-"}
-                        </span>
-                      }
-                      arrow
-                    >
-                      <Geography
-                        geography={geo}
-                        fill={value !== null && value !== undefined ? colorScale(value) : "#eee"}
-                        stroke="#222"
-                        style={{
-                          default: { outline: "none" },
-                          hover: { outline: "none", opacity: 0.8 },
-                          pressed: { outline: "none" },
-                        }}
-                      />
-                    </Tooltip>
-                  );
-                });
-            }}
-          </Geographies>
-        </ZoomableGroup>
-      </ComposableMap>
+    <Box
+      sx={{
+        background: "transparent",
+        p: 2,
+        borderRadius: 2,
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+      }}
+    >
+      <Box sx={{ width: "100%", maxWidth: "100vw" }}>
+        <ComposableMap
+          projection="geoMercator"
+          projectionConfig={{ scale: 1200, center: [115, 5] }}
+          style={{ width: "100%", maxWidth: "100vw", height: 500 }}
+        >
+          <ZoomableGroup>
+            <Geographies geography={`${import.meta.env.BASE_URL}southeast-asia.geojson`}>
+              {({ geographies }: { geographies: any[] }) => {
+                return geographies
+                  .filter((geo: any) => ASEAN_CODES.includes(geo.properties.ISO_A3))
+                  .map((geo: any) => {
+                    const code = geo.properties.ISO_A3;
+                    const value = valueByCountry[code];
+                    return (
+                      <Tooltip
+                        key={code}
+                        title={
+                          <span>
+                            <b>{COUNTRY_CODE_TO_NAME[code]}</b>
+                            <br />
+                            Year: {year}
+                            <br />
+                            Value: {value !== null && value !== undefined ? value.toFixed(2) : "-"}
+                          </span>
+                        }
+                        arrow
+                      >
+                        <Geography
+                          geography={geo}
+                          fill={value !== null && value !== undefined ? colorScale(value) : "#eee"}
+                          stroke="#222"
+                          style={{
+                            default: { outline: "none" },
+                            hover: { outline: "none", opacity: 0.8 },
+                            pressed: { outline: "none" },
+                          }}
+                        />
+                      </Tooltip>
+                    );
+                  });
+              }}
+            </Geographies>
+          </ZoomableGroup>
+        </ComposableMap>
+      </Box>
       <Box mt={2} display="flex" flexDirection="column" alignItems="center">
         <Slider
           min={2011}

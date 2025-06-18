@@ -46,23 +46,23 @@ const CountrySelector: React.FC = () => {
   return (
     <Box
       sx={{
-        width: 300,
-        minWidth: 220,
-        maxWidth: 340,
+        width: 220,
+        minWidth: 160,
+        maxWidth: 240,
         bgcolor: "background.paper",
         borderLeft: 1,
         borderColor: "divider",
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",
-        py: 2,
-        px: 2,
-        boxShadow: 2,
+        py: 1,
+        px: 1,
+        boxShadow: 1,
         height: "100%",
       }}
     >
-      <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-        <Typography variant="h6" fontWeight={600} fontSize={18}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+        <Typography variant="h6" fontWeight={500} fontSize={15}>
           Countries
         </Typography>
         <Tooltip title="Clear all">
@@ -83,11 +83,11 @@ const CountrySelector: React.FC = () => {
             </InputAdornment>
           ),
         }}
-        sx={{ mb: 2 }}
+        sx={{ mb: 1 }}
       />
-      <Box sx={{ flex: 1, overflowY: "auto", pr: 1 }}>
+      <Box sx={{ flex: 1, overflowY: "auto", pr: 0.5 }}>
         {filteredCountries.length === 0 ? (
-          <Typography color="text.secondary" fontSize={14} textAlign="center" mt={2}>
+          <Typography color="text.secondary" fontSize={12} textAlign="center" mt={1}>
             No countries found
           </Typography>
         ) : (
@@ -97,8 +97,8 @@ const CountrySelector: React.FC = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                mb: 1,
-                px: 1,
+                mb: 0.5,
+                px: 0.5,
                 borderRadius: 1,
                 bgcolor: selectedCountries.includes(code as CountryCode)
                   ? "action.selected"
@@ -110,11 +110,11 @@ const CountrySelector: React.FC = () => {
                 checked={selectedCountries.includes(code as CountryCode)}
                 onChange={() => handleToggle(code as CountryCode)}
                 size="small"
-                sx={{ mr: 1 }}
+                sx={{ mr: 0.5, p: 0.5 }}
                 inputProps={{ "aria-label": label }}
               />
               <Typography
-                fontSize={15}
+                fontSize={13}
                 color={
                   selectedCountries.includes(code as CountryCode) ? "primary.main" : "text.primary"
                 }

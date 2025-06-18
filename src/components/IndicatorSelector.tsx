@@ -8,7 +8,7 @@ const IndicatorSelector: React.FC = () => {
   const setSelectedIndicator = useDashboardStore((s) => s.setSelectedIndicator);
 
   return (
-    <Box display="flex" flexDirection="column" gap={2} mb={2}>
+    <Box display="flex" flexDirection="column" gap={1} mb={1}>
       <TextField
         select
         size="small"
@@ -18,7 +18,7 @@ const IndicatorSelector: React.FC = () => {
         SelectProps={{
           native: true,
         }}
-        sx={{ width: 600 }}
+        sx={{ width: 260, fontSize: 13 }}
       >
         <option value="BX.KLT.DINV.WD.GD.ZS">
           Foreign direct investment, net inflows (% of GDP)
@@ -32,4 +32,3 @@ const IndicatorSelector: React.FC = () => {
 };
 
 export default IndicatorSelector;
- 

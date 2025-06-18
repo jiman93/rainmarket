@@ -8,7 +8,7 @@ import YearSlider from "./components/YearSlider";
 import FooterBar from "./components/FooterBar";
 import CountrySelector from "./components/CountrySelector";
 import Box from "@mui/material/Box";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, createTheme, useTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -17,6 +17,7 @@ import React from "react";
 import { useDashboardStore } from "./store";
 import BarChartView from "./components/BarChartView";
 import MapView from "./components/MapView";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function App() {
   const [mode, setMode] = React.useState<"light" | "dark">("dark");
@@ -38,6 +39,8 @@ function App() {
   );
 
   const tab = useDashboardStore((s) => s.tab);
+  const muiTheme = useTheme();
+  const isSmall = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   return (
     <ThemeProvider theme={theme}>
@@ -47,7 +50,7 @@ function App() {
           sx={{
             maxWidth: 1300,
             mx: "auto",
-            p: 2,
+            p: isSmall ? 0.5 : 2,
             flex: 1,
             width: "100%",
             display: "flex",
@@ -63,7 +66,7 @@ function App() {
           <Header />
           <TabsBar />
           <IndicatorSelector />
-          <Box display="flex" gap={2} flex={1}>
+          <Box display="flex" gap={2} flex={1} flexDirection={isSmall ? "column" : "row"}>
             <Box flex={1} display="flex" flexDirection="column">
               {tab === 0 ? <TableView /> : null}
               {tab === 1 ? <LineChartView /> : null}
@@ -78,7 +81,7 @@ function App() {
                 <FooterBar />
               </Box>
             </Box>
-            {tab !== 3 && <CountrySelector />}
+            {tab !== 3 && !isSmall && <CountrySelector />}
           </Box>
         </Box>
       </Box>
