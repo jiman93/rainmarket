@@ -159,92 +159,94 @@ const TableView: React.FC = () => {
   }
 
   return (
-    <TableContainer component={Paper}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell onClick={() => handleSort("country")} style={{ cursor: "pointer" }}>
-              Country {sortBy === "country" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-            </TableCell>
-            {years.map((year) => (
+    <Box sx={{ minWidth: 1100, overflowX: "auto" }}>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell onClick={() => handleSort("country")} style={{ cursor: "pointer" }}>
+                Country {sortBy === "country" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+              </TableCell>
+              {years.map((year) => (
+                <TableCell
+                  key={year}
+                  onClick={() => handleSort("y" + year)}
+                  align="right"
+                  style={{ cursor: "pointer" }}
+                >
+                  {year} {sortBy === "y" + year ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                </TableCell>
+              ))}
               <TableCell
-                key={year}
-                onClick={() => handleSort("y" + year)}
+                onClick={() => handleSort("avg")}
                 align="right"
                 style={{ cursor: "pointer" }}
               >
-                {year} {sortBy === "y" + year ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                Average {sortBy === "avg" ? (sortDir === "asc" ? "▲" : "▼") : ""}
               </TableCell>
-            ))}
-            <TableCell
-              onClick={() => handleSort("avg")}
-              align="right"
-              style={{ cursor: "pointer" }}
-            >
-              Average {sortBy === "avg" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-            </TableCell>
-            <TableCell
-              onClick={() => handleSort("min")}
-              align="right"
-              style={{ cursor: "pointer" }}
-            >
-              Min {sortBy === "min" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-            </TableCell>
-            <TableCell
-              onClick={() => handleSort("max")}
-              align="right"
-              style={{ cursor: "pointer" }}
-            >
-              Max {sortBy === "max" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-            </TableCell>
-            <TableCell
-              onClick={() => handleSort("change")}
-              align="right"
-              style={{ cursor: "pointer" }}
-            >
-              Change {sortBy === "change" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedData.map((row) => {
-            const values = years.map((year) => row.values[year]);
-            const validValues = values.filter((v): v is number => v !== null);
-            const average =
-              validValues.length > 0
-                ? validValues.reduce((a, b) => a + b, 0) / validValues.length
-                : null;
-            const min = validValues.length > 0 ? Math.min(...validValues) : null;
-            const max = validValues.length > 0 ? Math.max(...validValues) : null;
-            const firstValue = values[0];
-            const lastValue = values[values.length - 1];
-            const change =
-              firstValue !== null && lastValue !== null
-                ? ((lastValue - firstValue) / firstValue) * 100
-                : null;
+              <TableCell
+                onClick={() => handleSort("min")}
+                align="right"
+                style={{ cursor: "pointer" }}
+              >
+                Min {sortBy === "min" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+              </TableCell>
+              <TableCell
+                onClick={() => handleSort("max")}
+                align="right"
+                style={{ cursor: "pointer" }}
+              >
+                Max {sortBy === "max" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+              </TableCell>
+              <TableCell
+                onClick={() => handleSort("change")}
+                align="right"
+                style={{ cursor: "pointer" }}
+              >
+                Change {sortBy === "change" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedData.map((row) => {
+              const values = years.map((year) => row.values[year]);
+              const validValues = values.filter((v): v is number => v !== null);
+              const average =
+                validValues.length > 0
+                  ? validValues.reduce((a, b) => a + b, 0) / validValues.length
+                  : null;
+              const min = validValues.length > 0 ? Math.min(...validValues) : null;
+              const max = validValues.length > 0 ? Math.max(...validValues) : null;
+              const firstValue = values[0];
+              const lastValue = values[values.length - 1];
+              const change =
+                firstValue !== null && lastValue !== null
+                  ? ((lastValue - firstValue) / firstValue) * 100
+                  : null;
 
-            return (
-              <TableRow key={row.country}>
-                <TableCell component="th" scope="row">
-                  {row.country}
-                </TableCell>
-                {values.map((value, idx) => (
-                  <TableCell key={idx} align="right">
-                    {value?.toFixed(2) ?? "-"}
+              return (
+                <TableRow key={row.country}>
+                  <TableCell component="th" scope="row">
+                    {row.country}
                   </TableCell>
-                ))}
-                <TableCell align="right">{average?.toFixed(2) ?? "-"}</TableCell>
-                <TableCell align="right">{min?.toFixed(2) ?? "-"}</TableCell>
-                <TableCell align="right">{max?.toFixed(2) ?? "-"}</TableCell>
-                <TableCell align="right">
-                  {change !== null ? `${change.toFixed(2)}%` : "-"}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                  {values.map((value, idx) => (
+                    <TableCell key={idx} align="right">
+                      {value?.toFixed(2) ?? "-"}
+                    </TableCell>
+                  ))}
+                  <TableCell align="right">{average?.toFixed(2) ?? "-"}</TableCell>
+                  <TableCell align="right">{min?.toFixed(2) ?? "-"}</TableCell>
+                  <TableCell align="right">{max?.toFixed(2) ?? "-"}</TableCell>
+                  <TableCell align="right">
+                    {change !== null ? `${change.toFixed(2)}%` : "-"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

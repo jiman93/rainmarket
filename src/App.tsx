@@ -65,7 +65,7 @@ function App() {
             <Box flex={1} display="flex" flexDirection="column">
               {tab === 0 ? <TableView /> : null}
               {tab === 1 ? <LineChartView /> : null}
-              <Box sx={{ ml: 4 }}>
+              <Box>
                 <YearSlider />
               </Box>
               <Box sx={{ width: "100%", mt: 2 }}>

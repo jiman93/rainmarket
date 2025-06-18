@@ -1,4 +1,6 @@
 import * as React from "react";
+import type { TooltipProps } from "recharts";
+import type { Payload } from "recharts/types/component/DefaultTooltipContent";
 import { useDashboardStore } from "../store";
 import { useQuery } from "@tanstack/react-query";
 import Box from "@mui/material/Box";
@@ -68,6 +70,36 @@ const COLORS = [
   "#FF6699",
 ];
 
+// Custom Tooltip for LineChart
+const COUNTRY_CODE_TO_NAME = Object.fromEntries(COUNTRY_CODES.map((c) => [c.code, c.name]));
+
+const CustomTooltip: React.FC<TooltipProps<number, string>> = (
+  props: TooltipProps<number, string>
+) => {
+  const { active, payload, label } = props;
+  const typedPayload = payload as Payload<number, string>[] | undefined;
+  if (active && typedPayload && typedPayload.length) {
+    return (
+      <Box
+        sx={{ bgcolor: "background.paper", p: 1.5, borderRadius: 1, boxShadow: 2, minWidth: 120 }}
+      >
+        <div style={{ fontWeight: 600, marginBottom: 4 }}>Year: {label}</div>
+        {typedPayload.map((entry) => {
+          const key = typeof entry.dataKey === "string" ? entry.dataKey : String(entry.dataKey);
+          const value =
+            typeof entry.value === "number" ? entry.value.toFixed(2) : entry.value ?? "-";
+          return (
+            <div key={key} style={{ color: entry.color, marginBottom: 2 }}>
+              {COUNTRY_CODE_TO_NAME[key] || key}: <b>{value}</b>
+            </div>
+          );
+        })}
+      </Box>
+    );
+  }
+  return null;
+};
+
 const LineChartView: React.FC = () => {
   const selectedCountries = useDashboardStore((s) => s.selectedCountries);
   const selectedIndicator = useDashboardStore((s) => s.selectedIndicators[0]);
@@ -76,6 +108,11 @@ const LineChartView: React.FC = () => {
     const [start, end] = yearRange;
     return ALL_YEARS.filter((y) => y >= start && y <= end);
   }, [yearRange]);
+
+  // Ref callback for chart export (to be used by FooterBar)
+  const chartRefCallback = React.useCallback((node: HTMLDivElement | null) => {
+    (window as Window & { chartRef?: HTMLDivElement }).chartRef = node || undefined;
+  }, []);
 
   function buildWorldBankUrl() {
     const countryStr = selectedCountries.join(";");
@@ -121,27 +158,29 @@ const LineChartView: React.FC = () => {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart data={chartData} margin={{ top: 20, right: 40, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="year" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
-        <Tooltip />
-        <Legend />
-        {selectedCountries.map((code, idx) => (
-          <Line
-            key={code}
-            type="monotone"
-            dataKey={code}
-            name={COUNTRY_CODES.find((c) => c.code === code)?.name || code}
-            stroke={COLORS[idx % COLORS.length]}
-            strokeWidth={2}
-            dot={false}
-            connectNulls
-          />
-        ))}
-      </LineChart>
-    </ResponsiveContainer>
+    <Box ref={chartRefCallback} sx={{ background: "transparent" }}>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={chartData} margin={{ top: 20, right: 40, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+          <YAxis tick={{ fontSize: 12 }} />
+          <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
+          <Legend />
+          {selectedCountries.map((code, idx) => (
+            <Line
+              key={code}
+              type="monotone"
+              dataKey={code}
+              name={COUNTRY_CODES.find((c) => c.code === code)?.name || code}
+              stroke={COLORS[idx % COLORS.length]}
+              strokeWidth={2}
+              dot={false}
+              connectNulls
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </Box>
   );
 };
 
