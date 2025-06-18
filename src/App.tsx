@@ -15,6 +15,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import React from "react";
 import { useDashboardStore } from "./store";
+import BarChartView from "./components/BarChartView";
 
 function App() {
   const [mode, setMode] = React.useState<"light" | "dark">("dark");
@@ -65,6 +66,7 @@ function App() {
             <Box flex={1} display="flex" flexDirection="column">
               {tab === 0 ? <TableView /> : null}
               {tab === 1 ? <LineChartView /> : null}
+              {tab === 2 ? <BarChartView /> : null}
               <Box>
                 <YearSlider />
               </Box>

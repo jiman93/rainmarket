@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useDashboardStore } from "../store";
 
-export const TABS = ["Table", "Line"];
+export const TABS = ["Table", "Line", "Bar"];
 
 const TabsBar: React.FC = () => {
   const tab = useDashboardStore((s) => s.tab || 0);
@@ -12,6 +12,7 @@ const TabsBar: React.FC = () => {
     <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
       <Tab label="Table" />
       <Tab label="Line" />
+      <Tab label="Bar" />
       <Tab label="Map" disabled />
       <Tab label="Slope" disabled />
     </Tabs>
