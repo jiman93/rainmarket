@@ -18,7 +18,7 @@ const IndicatorSelector: React.FC = () => {
         SelectProps={{
           native: true,
         }}
-        sx={{ width: 260, fontSize: 13 }}
+        sx={{ width: { xs: 260, sm: 420 }, fontSize: 13 }}
       >
         <option value="BX.KLT.DINV.WD.GD.ZS">
           Foreign direct investment, net inflows (% of GDP)

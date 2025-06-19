@@ -17,6 +17,7 @@ import React from "react";
 import { useDashboardStore } from "./store";
 import BarChartView from "./components/BarChartView";
 import MapView from "./components/MapView";
+import ScatterPlotView from "./components/ScatterPlotView";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 function App() {
@@ -65,14 +66,16 @@ function App() {
           </Box>
           <Header />
           <TabsBar />
-          <IndicatorSelector />
+          {tab !== 4 && <IndicatorSelector />}
+
           <Box display="flex" gap={2} flex={1} flexDirection={isSmall ? "column" : "row"}>
             <Box flex={1} display="flex" flexDirection="column">
               {tab === 0 ? <TableView /> : null}
               {tab === 1 ? <LineChartView /> : null}
               {tab === 2 ? <BarChartView /> : null}
               {tab === 3 ? <MapView /> : null}
-              {tab !== 3 && (
+              {tab === 4 ? <ScatterPlotView /> : null}
+              {tab !== 3 && tab !== 4 && (
                 <Box>
                   <YearSlider />
                 </Box>
@@ -81,7 +84,7 @@ function App() {
                 <FooterBar />
               </Box>
             </Box>
-            {tab !== 3 && !isSmall && <CountrySelector />}
+            {tab !== 3 && tab !== 4 && !isSmall && <CountrySelector />}
           </Box>
         </Box>
       </Box>

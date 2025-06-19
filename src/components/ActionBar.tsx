@@ -124,7 +124,7 @@ const ActionBar: React.FC<{ tab: number; data: unknown }> = ({ tab, data }) => {
 
   return (
     <>
-      {tab !== 3 && (
+      {tab !== 3 && tab !== 4 && (
         <>
           <Tooltip title="Download">
             <IconButton color="default" onClick={handleDownloadClick} size="large">

@@ -15,19 +15,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { COUNTRY_CODES, COUNTRY_LABELS, COUNTRY_COLORS } from "./chartUtils";
 
-const COUNTRY_CODES = [
-  { code: "MY", name: "Malaysia" },
-  { code: "ID", name: "Indonesia" },
-  { code: "SG", name: "Singapore" },
-  { code: "TH", name: "Thailand" },
-  { code: "MM", name: "Myanmar" },
-  { code: "VN", name: "Vietnam" },
-  { code: "BN", name: "Brunei" },
-  { code: "LA", name: "Lao PDR" },
-  { code: "KH", name: "Cambodia" },
-  { code: "PH", name: "Philippines" },
-];
 const ALL_YEARS = Array.from({ length: 2021 - 2011 + 1 }, (_, i) => 2011 + i);
 
 function processLineData(apiData: unknown, selectedCountries: string[], years: number[]) {
@@ -71,7 +60,7 @@ const COLORS = [
 ];
 
 // Custom Tooltip for LineChart
-const COUNTRY_CODE_TO_NAME = Object.fromEntries(COUNTRY_CODES.map((c) => [c.code, c.name]));
+const COUNTRY_CODE_TO_NAME = COUNTRY_LABELS;
 
 const CustomTooltip: React.FC<TooltipProps<number, string>> = (
   props: TooltipProps<number, string>
@@ -171,8 +160,8 @@ const LineChartView: React.FC = () => {
               key={code}
               type="monotone"
               dataKey={code}
-              name={COUNTRY_CODES.find((c) => c.code === code)?.name || code}
-              stroke={COLORS[idx % COLORS.length]}
+              name={COUNTRY_LABELS[code] || code}
+              stroke={COUNTRY_COLORS[code] || "#8884d8"}
               strokeWidth={2}
               dot={false}
               connectNulls

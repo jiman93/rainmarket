@@ -15,33 +15,10 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { COUNTRY_CODES, COUNTRY_LABELS, COUNTRY_COLORS } from "./chartUtils";
 
-const COUNTRY_CODES = [
-  { code: "MY", name: "Malaysia" },
-  { code: "ID", name: "Indonesia" },
-  { code: "SG", name: "Singapore" },
-  { code: "TH", name: "Thailand" },
-  { code: "MM", name: "Myanmar" },
-  { code: "VN", name: "Vietnam" },
-  { code: "BN", name: "Brunei" },
-  { code: "LA", name: "Lao PDR" },
-  { code: "KH", name: "Cambodia" },
-  { code: "PH", name: "Philippines" },
-];
 const ALL_YEARS = Array.from({ length: 2021 - 2011 + 1 }, (_, i) => 2011 + i);
-const COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff7300",
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#A28FD0",
-  "#FF6699",
-];
-const COUNTRY_CODE_TO_NAME = Object.fromEntries(COUNTRY_CODES.map((c) => [c.code, c.name]));
+const COUNTRY_CODE_TO_NAME = COUNTRY_LABELS;
 
 function processBarData(apiData: unknown, selectedCountries: string[], years: number[]) {
   const data = apiData as { [key: number]: unknown[] };
@@ -163,12 +140,12 @@ const BarChartView: React.FC = () => {
           <YAxis tick={{ fontSize: 11 }} />
           <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
           <Legend />
-          {selectedCountries.map((code, idx) => (
+          {selectedCountries.map((code) => (
             <Bar
               key={code}
               dataKey={code}
-              name={COUNTRY_CODES.find((c) => c.code === code)?.name || code}
-              fill={COLORS[idx % COLORS.length]}
+              name={COUNTRY_LABELS[code] || code}
+              fill={COUNTRY_COLORS[code] || "#8884d8"}
               isAnimationActive={false}
             />
           ))}
