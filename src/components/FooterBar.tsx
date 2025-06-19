@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import { useDashboardStore } from "../store";
 import { useQuery } from "@tanstack/react-query";
 import ActionBar from "./ActionBar";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 const COUNTRY_CODES = [
   { code: "MY", name: "Malaysia" },
@@ -33,6 +35,8 @@ const FooterBar: React.FC = () => {
       return res.json();
     },
   });
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <Box
@@ -56,7 +60,7 @@ const FooterBar: React.FC = () => {
         </Typography>
       </Box>
       <Box display="flex" gap={2}>
-        <ActionBar tab={tab} data={data} />
+        {!isSm && <ActionBar tab={tab} data={data} />}
       </Box>
     </Box>
   );
