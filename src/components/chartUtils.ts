@@ -28,3 +28,13 @@ export const COUNTRY_COLORS: Record<string, string> = {
   KH: "#B82E2E", // Dark Red
   PH: "#316395", // Navy
 };
+
+export function formatLargeNumber(num: number | null): string {
+  if (num === null) return "-";
+  const absNum = Math.abs(num);
+  if (absNum >= 1e12) return (num / 1e12).toFixed(2) + "T";
+  if (absNum >= 1e9) return (num / 1e9).toFixed(2) + "B";
+  if (absNum >= 1e6) return (num / 1e6).toFixed(2) + "M";
+  if (absNum >= 1e3) return (num / 1e3).toFixed(2) + "K";
+  return num.toLocaleString();
+}

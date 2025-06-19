@@ -15,37 +15,26 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { COUNTRY_CODES, formatLargeNumber } from "./chartUtils";
 
-const COUNTRY_CODES = [
-  { code: "MY", name: "Malaysia" },
-  { code: "ID", name: "Indonesia" },
-  { code: "SG", name: "Singapore" },
-  { code: "TH", name: "Thailand" },
-  { code: "MM", name: "Myanmar" },
-  { code: "VN", name: "Vietnam" },
-  { code: "BN", name: "Brunei" },
-  { code: "LA", name: "Lao PDR" },
-  { code: "KH", name: "Cambodia" },
-  { code: "PH", name: "Philippines" },
-];
 const ALL_YEARS = Array.from({ length: 2021 - 2011 + 1 }, (_, i) => 2011 + i);
 
 function processData(apiData: any) {
   const byCountry: Record<string, Record<number, number | null>> = {};
-  COUNTRY_CODES.forEach((c) => (byCountry[c.name] = {}));
+  COUNTRY_CODES.forEach((c) => (byCountry[c.code] = {}));
   const arr = Array.isArray(apiData[1]) ? apiData[1] : [];
   arr.forEach((row: any) => {
-    const c = row.country.value;
+    const code = row.country.id;
     const y = Number(row.date);
-    if (byCountry[c] && ALL_YEARS.includes(y)) {
-      byCountry[c][y] = row.value;
+    if (byCountry[code] && ALL_YEARS.includes(y)) {
+      byCountry[code][y] = row.value;
     }
   });
   return COUNTRY_CODES.map((c) => ({
     code: c.code,
     country: c.name,
     values: ALL_YEARS.reduce(
-      (acc, y) => ({ ...acc, [y]: byCountry[c.name][y] ?? null }),
+      (acc, y) => ({ ...acc, [y]: byCountry[c.code][y] ?? null }),
       {} as Record<number, number | null>
     ),
   }));
@@ -63,7 +52,7 @@ const TableView: React.FC = () => {
     enabled: !!selectedIndicator,
     queryFn: async () => {
       const codes = COUNTRY_CODES.map((c) => c.code).join(";");
-      const range = `${ALL_YEARS[0]}:${ALL_YEARS.at(-1)}`;
+      const range = `${ALL_YEARS[0]}:${ALL_YEARS[ALL_YEARS.length - 1]}`;
       const res = await fetch(
         `https://api.worldbank.org/v2/country/${codes}/indicator/${selectedIndicator}?format=json&date=${range}&per_page=1000`
       );
@@ -112,9 +101,9 @@ const TableView: React.FC = () => {
             break;
           case "change": {
             const a0 = a.values[displayYears[0]]!,
-              aN = a.values[displayYears.at(-1)!]!;
+              aN = a.values[displayYears[displayYears.length - 1]]!;
             const b0 = b.values[displayYears[0]]!,
-              bN = b.values[displayYears.at(-1)!]!;
+              bN = b.values[displayYears[displayYears.length - 1]]!;
             aV = ((aN - a0) / a0) * 100;
             bV = ((bN - b0) / b0) * 100;
             break;
@@ -185,7 +174,7 @@ const TableView: React.FC = () => {
                         fontWeight={500}
                         color={r.values[y] != null ? "text.primary" : "text.disabled"}
                       >
-                        {r.values[y] != null ? r.values[y]!.toFixed(2) : "-"}
+                        {r.values[y] != null ? formatLargeNumber(r.values[y]) : "-"}
                       </Typography>
                     </Box>
                   ))}
@@ -199,88 +188,98 @@ const TableView: React.FC = () => {
   }
 
   return (
-    <Box sx={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-      <TableContainer component={Paper} sx={{ boxShadow: 1, minWidth: 700, display: "block" }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell
-                onClick={() => handleSort("country")}
-                sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
-              >
-                Country {sortBy === "country" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-              </TableCell>
-              {displayYears.map((y) => (
-                <TableCell
-                  key={y}
-                  onClick={() => handleSort("y" + y)}
-                  align="right"
-                  sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
-                >
-                  {y}
-                  {sortBy === "y" + y ? (sortDir === "asc" ? "▲" : "▼") : ""}
-                </TableCell>
-              ))}
-              <TableCell
-                onClick={() => handleSort("avg")}
-                align="right"
-                sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
-              >
-                Avg {sortBy === "avg" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-              </TableCell>
-              <TableCell
-                onClick={() => handleSort("min")}
-                align="right"
-                sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
-              >
-                Min {sortBy === "min" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-              </TableCell>
-              <TableCell
-                onClick={() => handleSort("max")}
-                align="right"
-                sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
-              >
-                Max {sortBy === "max" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-              </TableCell>
-              <TableCell
-                onClick={() => handleSort("change")}
-                align="right"
-                sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
-              >
-                Change {sortBy === "change" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sorted.map((r) => {
-              const vals = displayYears.map((y) => r.values[y]);
-              const valid = vals.filter((v) => v != null) as number[];
-              const avg = valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : null;
-              const mn = valid.length ? Math.min(...valid) : null;
-              const mx = valid.length ? Math.max(...valid) : null;
-              const first = vals[0],
-                last = vals.at(-1);
-              const ch = first != null && last != null ? ((last - first) / first) * 100 : null;
-              return (
-                <TableRow key={r.code}>
-                  <TableCell component="th" scope="row">
-                    {r.country}
+    <Box display="flex" width="100%">
+      <Box flex="1" minWidth={0}>
+        <Box sx={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          <TableContainer component={Paper} sx={{ boxShadow: 1, minWidth: 700, display: "block" }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    onClick={() => handleSort("country")}
+                    sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
+                  >
+                    Country {sortBy === "country" ? (sortDir === "asc" ? "▲" : "▼") : ""}
                   </TableCell>
-                  {vals.map((v, i) => (
-                    <TableCell key={i} align="right">
-                      {v != null ? v.toFixed(2) : "-"}
+                  {displayYears.map((y) => (
+                    <TableCell
+                      key={y}
+                      onClick={() => handleSort("y" + y)}
+                      align="right"
+                      sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
+                    >
+                      {y}
+                      {sortBy === "y" + y ? (sortDir === "asc" ? "▲" : "▼") : ""}
                     </TableCell>
                   ))}
-                  <TableCell align="right">{avg != null ? avg.toFixed(2) : "-"}</TableCell>
-                  <TableCell align="right">{mn != null ? mn.toFixed(2) : "-"}</TableCell>
-                  <TableCell align="right">{mx != null ? mx.toFixed(2) : "-"}</TableCell>
-                  <TableCell align="right">{ch != null ? ch.toFixed(2) + "%" : "-"}</TableCell>
+                  <TableCell
+                    onClick={() => handleSort("avg")}
+                    align="right"
+                    sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
+                  >
+                    Avg {sortBy === "avg" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </TableCell>
+                  <TableCell
+                    onClick={() => handleSort("min")}
+                    align="right"
+                    sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
+                  >
+                    Min {sortBy === "min" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </TableCell>
+                  <TableCell
+                    onClick={() => handleSort("max")}
+                    align="right"
+                    sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
+                  >
+                    Max {sortBy === "max" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </TableCell>
+                  <TableCell
+                    onClick={() => handleSort("change")}
+                    align="right"
+                    sx={{ cursor: "pointer", fontSize: 13, p: 0.75 }}
+                  >
+                    Change {sortBy === "change" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableHead>
+              <TableBody>
+                {sorted.map((r) => {
+                  const vals = displayYears.map((y) => r.values[y]);
+                  const valid = vals.filter((v) => v != null) as number[];
+                  const avg = valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : null;
+                  const mn = valid.length ? Math.min(...valid) : null;
+                  const mx = valid.length ? Math.max(...valid) : null;
+                  const first = vals[0],
+                    last = vals[vals.length - 1];
+                  const ch = first != null && last != null ? ((last - first) / first) * 100 : null;
+                  return (
+                    <TableRow key={r.code}>
+                      <TableCell component="th" scope="row">
+                        {r.country}
+                      </TableCell>
+                      {vals.map((v, i) => (
+                        <TableCell key={i} align="right">
+                          {formatLargeNumber(v)}
+                        </TableCell>
+                      ))}
+                      <TableCell align="right">
+                        {avg != null ? formatLargeNumber(avg) : "-"}
+                      </TableCell>
+                      <TableCell align="right">
+                        {mn != null ? formatLargeNumber(mn) : "-"}
+                      </TableCell>
+                      <TableCell align="right">
+                        {mx != null ? formatLargeNumber(mx) : "-"}
+                      </TableCell>
+                      <TableCell align="right">{ch != null ? ch.toFixed(2) + "%" : "-"}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </Box>
     </Box>
   );
 };

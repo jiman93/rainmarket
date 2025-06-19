@@ -24,7 +24,7 @@ const IndicatorSelector: React.FC = () => {
           Foreign direct investment, net inflows (% of GDP)
         </option>
         <option value="NE.EXP.GNFS.ZS">Exports of goods and services (% of GDP)</option>
-        <option value="NE.TRD.GNFS.ZS">Trade (% of GDP)</option>
+        <option value="BN.GSR.GNFS.CD">Net trade in goods and services (BoP, current US$)</option>
         <option value="EG.ELC.HYRO.ZS">Hydroelectricity (% of total electricity output)</option>
       </TextField>
     </Box>
