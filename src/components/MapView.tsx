@@ -7,6 +7,7 @@ import { interpolateYlOrRd } from "d3-scale-chromatic";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import Tooltip from "@mui/material/Tooltip";
+import { formatLargeNumber } from "./chartUtils";
 
 // ASEAN country codes (ISO Alpha-3)
 const ASEAN_CODES = [
@@ -103,7 +104,8 @@ const MapView: React.FC = () => {
                             <br />
                             Year: {year}
                             <br />
-                            Value: {value !== null && value !== undefined ? value.toFixed(2) : "-"}
+                            Value:{" "}
+                            {value !== null && value !== undefined ? formatLargeNumber(value) : "-"}
                           </span>
                         }
                         arrow
